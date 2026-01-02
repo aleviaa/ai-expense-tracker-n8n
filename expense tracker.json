@@ -1,0 +1,272 @@
+{
+  "name": "expense tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c3301578-e44d-463c-95c5-208ade5906c7",
+      "name": "Telegram Trigger",
+      "webhookId": "b6a5fd15-dabf-4a94-8b08-7277680a729f",
+      "credentials": {
+        "telegramApi": {
+          "id": "azigh4YJIVE7UJET",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "59969612-ff8d-4441-ae72-1b6fc7bc6dfa",
+                    "leftValue": "=",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d9ff97a8-b303-4791-8774-d17a88726948",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=Your role is to record expenses. From the user's message, extract 3 pieces of information such as:\n1. Date,\n2. Type of purchased product\n3. How much the user spent.\nUse the Google Sheets tool to save the user's information.\nFor relative dates, such as yesterday, today or tomorrow, you need to know that today is the date: {{ $today }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "601c60c1-14f4-446c-b9d5-13b2b05edbd1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        416,
+        240
+      ],
+      "id": "4879c961-8910-4ab0-9923-ec3eb75a1847",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hxt4XRUo8HXHArxA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Switch').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "1baf9c0e-a1b1-41fd-ac7c-ca2dc0545948",
+      "name": "Send a text message",
+      "webhookId": "a30cf7f9-b971-4330-a8be-0bc167e2e02c",
+      "credentials": {
+        "telegramApi": {
+          "id": "azigh4YJIVE7UJET",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1TROjC5em8C6a7y_ynFrbSzZ9Ws0idO2p7fFZWxnKzhg",
+          "mode": "list",
+          "cachedResultName": "EXPENSE TRACKER",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TROjC5em8C6a7y_ynFrbSzZ9Ws0idO2p7fFZWxnKzhg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TROjC5em8C6a7y_ynFrbSzZ9Ws0idO2p7fFZWxnKzhg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "DATE": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('DATE', ``, 'string') }}",
+            "EXPENSE": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('EXPENSE', ``, 'string') }}",
+            "AMOUNT": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('AMOUNT', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "DATE",
+              "displayName": "DATE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EXPENSE",
+              "displayName": "EXPENSE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AMOUNT",
+              "displayName": "AMOUNT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        208
+      ],
+      "id": "569cebcd-9824-4655-bf01-a398a967f2ca",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gJpBlXxmgmRatYy2",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "fb0519bf-9755-43ce-8f94-371d54804c73",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bd99f65f27ff12fa8cae5392c8343e4c2cfab51b08ffd2c34a89bcb057b2a4b7"
+  },
+  "id": "ZbH5tpaZMLSS1CXp",
+  "tags": []
+}

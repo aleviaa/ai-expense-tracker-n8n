@@ -30,5 +30,17 @@ Tech Stack
 4. Send an expense message on Telegram
 
 ---
+Screenshots
 
+# Workflow
+![Workflow](workflow.png)
+
+# Telegram Input
+![Telegram](telegram_input.png)
+
+# Google Sheets Output
+![Google Sheets](googlesheets.png)
+
+##  Files
+- `expense tracker.json` → n8n workflow export
 This project was built as a practical automation + AI integration project.
